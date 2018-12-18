@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "23856444688",
+    "firebase_url": "https://sturrd-c421e.firebaseio.com",
+    "project_id": "sturrd-c421e",
+    "storage_bucket": "sturrd-c421e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23856444688:android:cc558b77618674e3",
+        "android_client_info": {
+          "package_name": "com.codrata.sturrd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23856444688-2vgnqrtearggiugvrj0cmiqd17f2cubc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codrata.sturrd",
+            "certificate_hash": "b2fb9ee824a9dbb4038d445b22f0ed517ee0afe2"
+          }
+        },
+        {
+          "client_id": "23856444688-901gl3s68j0nafe1sr3613prgl250vb2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxdG4FJvO10AK4QhhyYGF_5Q-8UQXAqYQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23856444688-901gl3s68j0nafe1sr3613prgl250vb2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
