@@ -54,19 +54,36 @@ public class LikeProfile extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
 
-                            name = dataSnapshot.child("name").getValue().toString();
+                            if (dataSnapshot.child("name").exists()) {
+                                name = dataSnapshot.child("name").getValue().toString();
+                                if (dataSnapshot.child("age").exists()) {
+                                    age = dataSnapshot.child("age").getValue().toString();
+                                    mName.setText(name + "," + " " + age);
+                                }else {
+                                    mName.setText(name + ",");
+                                }
+                            }else {
+                                mName.setText(("No Name"));
+                            }
 
-                            age = dataSnapshot.child("age").getValue().toString();
 
-                            job = dataSnapshot.child("job").getValue().toString();
 
-                            about = dataSnapshot.child("about").getValue().toString();
+                            if (dataSnapshot.child("job").exists()) {
+                                job = dataSnapshot.child("job").getValue().toString();
+                                mJob.setText(job);
+                            }else {
+                                mJob.setText("No Job");
+                            }
 
+                            if (dataSnapshot.child("about").exists()) {
+                                about = dataSnapshot.child("about").getValue().toString();
+                                mAbout.setText("About:" + "\n" + "\n"  + about);
+                            }else {
+                                mAbout.setText("No About");
+                            }
                             profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
-                        mName.setText(name + "," + " " + age);
-                        mJob.setText(job);
-                        mAbout.setText("About:" + "\n" + "\n"  + about);
+
                         if (!profileImageUrl.equals("default"))
                             Glide.with(getApplicationContext()).load(profileImageUrl).into(mImage);
                     }
