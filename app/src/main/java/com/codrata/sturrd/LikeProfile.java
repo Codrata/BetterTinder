@@ -21,10 +21,11 @@ public class LikeProfile extends AppCompatActivity {
 
     private TextView mName,
             mJob,
-            mAbout;
+            mAbout,
+            mAge;
 
     private ImageView mImage;
-    private String likeId, name, age, job, about, profileImageUrl, currentUid;
+    private String likeId, name, age, job, about, profileImageUrl;
 
     DatabaseReference mDatabaseUser;
 
@@ -41,6 +42,7 @@ public class LikeProfile extends AppCompatActivity {
         mJob = findViewById(R.id.like_job_profile);
         mAbout = findViewById(R.id.like_about_profile);
         mImage = findViewById(R.id.like_image_profile);
+        mAge = findViewById(R.id.like_age_profile);
 
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(likeId);
         getUserInfo();
@@ -58,9 +60,11 @@ public class LikeProfile extends AppCompatActivity {
                                 name = dataSnapshot.child("name").getValue().toString();
                                 if (dataSnapshot.child("age").exists()) {
                                     age = dataSnapshot.child("age").getValue().toString();
-                                    mName.setText(name + "," + " " + age);
+                                    mName.setText(name + ",");
+                                    mAge.setText(age);
                                 }else {
                                     mName.setText(name + ",");
+                                    mAge.setText("");
                                 }
                             }else {
                                 mName.setText(("No Name"));

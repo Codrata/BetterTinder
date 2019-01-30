@@ -1,64 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".LikeProfile">
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:outlineProvider="bounds"
+        android:layout_gravity="center"
         android:clipToPadding="false"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:outlineProvider="bounds">
 
         <ImageView
-            android:src="@mipmap/ic_user_default"
+            android:id="@+id/like_image_profile"
             android:layout_width="match_parent"
             android:layout_height="300sp"
-            android:id="@+id/like_image_profile"
-            android:scaleType="centerCrop"
             android:layout_above="@+id/name"
-            />
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_user_default" />
 
-        <TextView
-            android:layout_gravity="bottom"
-            android:id="@+id/like_name_profile"
-            android:textSize="30sp"
-            android:padding="20sp"
-            android:textColor="@color/colorBlack"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/like_name_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:paddingTop="10sp"
+                android:paddingBottom="10sp"
+                android:paddingLeft="10sp"
+                android:textColor="@color/colorBlack"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/like_age_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:paddingTop="10sp"
+                android:paddingBottom="10sp"
+                android:paddingLeft="5sp"
+                android:textColor="@color/colorBlack"
+                android:textSize="30sp"
+                 />
+        </LinearLayout>
 
         <TextView
-            android:drawableLeft="@drawable/ic_user"
-            android:drawableTint="@color/colorBlack"
-            android:drawablePadding="10sp"
-            android:text="job"
-            android:layout_gravity="bottom"
             android:id="@+id/like_job_profile"
-            android:textSize="20sp"
-            android:padding="20sp"
-            android:textColor="@color/colorBlack"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:drawableLeft="@drawable/ic_user"
+            android:drawablePadding="10sp"
+            android:drawableTint="@color/colorBlack"
+            android:padding="20sp"
+            android:text="job"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/colorBlack"/>
+            android:background="@color/colorBlack" />
 
         <TextView
-            android:layout_gravity="bottom"
             android:id="@+id/like_about_profile"
-            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:padding="20sp"
             android:textColor="@color/colorBlack"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10sp"
+            android:gravity="center">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabNopeProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:backgroundTint="@color/colorWhite"
+                android:clickable="true"
+                android:elevation="2sp"
+                android:focusable="true"
+                android:src="@drawable/ic_nope" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabLikeProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:backgroundTint="@color/colorWhite"
+                android:clickable="true"
+                android:elevation="2sp"
+                android:focusable="true"
+                android:src="@drawable/ic_like" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
