@@ -24,7 +24,7 @@ public class LikeProfile extends AppCompatActivity {
             mAbout;
 
     private ImageView mImage;
-    private String likeId, name, age, job, about, profileImageUrl;
+    private String likeId, name, age, job, about, profileImageUrl, currentUid;
 
     DatabaseReference mDatabaseUser;
 
@@ -66,7 +66,7 @@ public class LikeProfile extends AppCompatActivity {
 
                         mName.setText(name + "," + " " + age);
                         mJob.setText(job);
-                        mAbout.setText(about);
+                        mAbout.setText("About:" + "\n" + "\n"  + about);
                         if (!profileImageUrl.equals("default"))
                             Glide.with(getApplicationContext()).load(profileImageUrl).into(mImage);
                     }
