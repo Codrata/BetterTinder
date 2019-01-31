@@ -31,7 +31,7 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".ZoomCardActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".LikeProfile"></activity>
+        <activity android:name=".LikeProfile" />
     </application>
 
 </manifest>
