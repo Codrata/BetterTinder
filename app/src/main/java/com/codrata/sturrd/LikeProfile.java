@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codrata.sturrd.Cards.cardObject;
+import com.codrata.sturrd.Fragments.MatchesFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +40,7 @@ public class LikeProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like_profile);
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         likeId = getIntent().getExtras().getString("likeId");
         mAuth = FirebaseAuth.getInstance();
 
@@ -130,7 +131,7 @@ public class LikeProfile extends AppCompatActivity {
 
                     SendNotification sendNotification = new SendNotification();
                     sendNotification.SendNotification("check it out!", "new Connection!", dataSnapshot.getKey());
-
+                    LikeProfile.super.onBackPressed();
 
                 }
             }
