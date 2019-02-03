@@ -1,7 +1,12 @@
 package com.codrata.sturrd;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
@@ -10,20 +15,36 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.codrata.sturrd.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 import com.codrata.sturrd.Fragments.CardFragment;
 import com.codrata.sturrd.Fragments.MatchesFragment;
 import com.codrata.sturrd.Fragments.UserFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
+    private String currentUId;
+    private DatabaseReference usersDb, instanceDb;
+    private FusedLocationProviderClient client;
     private ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.ic_tab_user,
@@ -35,8 +56,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //save the notificationID to the database
+
+
+        client = LocationServices.getFusedLocationProviderClient(this);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        currentUId = mAuth.getCurrentUser().getUid();
+        usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
         OneSignal.startInit(this).init();
         OneSignal.sendTag("User_ID", FirebaseAuth.getInstance().getCurrentUser().getUid());
         OneSignal.setEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -49,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        locationUpdate();
+        requestPermissions();
 
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -127,5 +155,71 @@ public class MainActivity extends AppCompatActivity {
             //return mFragmentTitleList.get(position);
             return null;
         }
+    }
+
+    public void locationUpdate() {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        client.getLastLocation().addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+
+                if (location != null) {
+                    final double longitude = location.getLongitude();
+                    final double latitude = location.getLatitude();
+
+                    //usersDb.child("latitude").child(latitudeString).setValue(true);
+                    //usersDb.child("longitude").child(longitudeString).setValue(true);
+
+
+                    usersDb.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String latitudeString = String.valueOf(latitude);
+                            String longitudeString = String.valueOf(longitude);
+                            Location locationA = new Location("point A");
+                            locationA.setLatitude(latitude);
+                            locationA.setLongitude(longitude);
+                            Location locationB = new Location("point B");
+                            String latitudeB = dataSnapshot.child("lgROtEnLuGNonWdHMm13dD2dQrj1").child("LatLng").child("latitude").getValue().toString();
+                            String longitudeB = dataSnapshot.child("lgROtEnLuGNonWdHMm13dD2dQrj1").child("LatLng").child("longitude").getValue().toString();
+                            locationB.setLatitude(Double.parseDouble(latitudeB));
+                            locationB.setLongitude(Double.parseDouble(longitudeB));
+
+                            float distance = locationA.distanceTo(locationB);
+
+                            //TODO correct the distance
+                            //convert distance to km
+                            distance = (Math.round(distance / 1000));
+                            String finalDist = String.valueOf(distance);
+
+                            Map userLatLng = new HashMap();
+                            userLatLng.put("latitude", latitudeString);
+                            userLatLng.put("longitude", longitudeString);
+                            userLatLng.put("distance", finalDist + "km");
+                            usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+            }
+        });
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
     }
 }

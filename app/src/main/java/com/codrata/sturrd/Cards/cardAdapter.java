@@ -29,8 +29,10 @@ public class cardAdapter extends ArrayAdapter<cardObject>{
 
         TextView name = convertView.findViewById(R.id.name);
         ImageView image = convertView.findViewById(R.id.image);
+        TextView distance = convertView.findViewById(R.id.distance);
 
         name.setText(card_item.getName() + ", " + card_item.getAge());
+        distance.setText(card_item.getDistance() + "km");
 
         if(!card_item.getProfileImageUrl().equals("default"))
             Glide.with(convertView.getContext()).load(card_item.getProfileImageUrl()).into(image);

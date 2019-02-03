@@ -40,7 +40,6 @@ public class LikeProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like_profile);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         likeId = getIntent().getExtras().getString("likeId");
         mAuth = FirebaseAuth.getInstance();
 

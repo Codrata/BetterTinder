@@ -1,6 +1,7 @@
 package com.codrata.sturrd.Fragments;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,8 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.codrata.sturrd.OfflineActivity;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,6 +41,7 @@ public class CardFragment  extends Fragment {
     private FirebaseAuth mAuth;
 
     private String currentUId;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private DatabaseReference usersDb;
 
@@ -60,6 +66,7 @@ public class CardFragment  extends Fragment {
         view = inflater.inflate(R.layout.fragment_card, container, false);
 
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser()==null)
@@ -176,6 +183,7 @@ public class CardFragment  extends Fragment {
     }
 
     private String  userInterest;
+    private String userWanna;
 
     public void checkUserSex(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -187,7 +195,8 @@ public class CardFragment  extends Fragment {
 
                     if (dataSnapshot.child("interest").getValue() != null)
                         userInterest = dataSnapshot.child("interest").getValue().toString();
-
+                    if (dataSnapshot.child("wanna").getValue() != null)
+                        userWanna = dataSnapshot.child("wanna").getValue().toString();
                     rowItems.clear();
                     cardAdapter.notifyDataSetChanged();
                     getUsersInfo();
@@ -210,12 +219,13 @@ public class CardFragment  extends Fragment {
                         return;
 
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("likes").hasChild(currentUId)) {
-                        if(dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both")){
+                        // TODO add the hookup filter
+                        if(dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both") && ! dataSnapshot.child("wanna").getValue().toString().equals(userWanna)){
                             String  name = "",
                                     age = "",
                                     job = "",
                                     about = "",
-                                    time = "",
+                                    distance = "",
                                     userSex = "",
                                     profileImageUrl = "default";
                             if(dataSnapshot.child("name").getValue()!=null)
@@ -228,12 +238,12 @@ public class CardFragment  extends Fragment {
                                 job = dataSnapshot.child("job").getValue().toString();
                             if(dataSnapshot.child("about").getValue()!=null)
                                 about = dataSnapshot.child("about").getValue().toString();
-                            if(dataSnapshot.child("time").getValue()!=null)
+                            if(dataSnapshot.child("distance").getValue()!=null)
                                 about = dataSnapshot.child("time").getValue().toString();
                             if (dataSnapshot.child("profileImageUrl").getValue()!=null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
-                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, time, profileImageUrl);
+                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, distance, profileImageUrl);
 
                             for(int i = 0; i < rowItems.size();i++)
                                 if(rowItems.get(i) == item)
@@ -260,4 +270,5 @@ public class CardFragment  extends Fragment {
             }
         });
     }
+
 }

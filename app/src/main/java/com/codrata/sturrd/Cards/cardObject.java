@@ -9,7 +9,7 @@ public class cardObject implements Serializable {
                     profileImageUrl,
                     age,
                     about,
-                    time,
+                    distance,
                     job;
     public cardObject(String userId, String name, String age, String about, String time, String job, String profileImageUrl){
         this.userId = userId;
@@ -17,7 +17,7 @@ public class cardObject implements Serializable {
         this.profileImageUrl = profileImageUrl;
         this.age = age;
         this.about = about;
-        this.time = time;
+        this.distance = distance;
         this.job = job;
     }
 
@@ -30,6 +30,7 @@ public class cardObject implements Serializable {
     public String getAge(){
         return age;
     }
+    public String getDistance(){return distance; }
     public String getAbout(){
         return about;
     }
@@ -39,4 +40,5 @@ public class cardObject implements Serializable {
     public String getProfileImageUrl(){
         return profileImageUrl;
     }
+
 }
