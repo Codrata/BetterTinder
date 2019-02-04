@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Oops, no more people around you..."/>
+        android:text="@string/oops_no_more_people_around_you"/>
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
