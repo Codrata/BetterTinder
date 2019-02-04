@@ -220,7 +220,7 @@ public class CardFragment  extends Fragment {
 
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("likes").hasChild(currentUId)) {
                         // TODO add the hookup filter
-                        if(dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both") && ! dataSnapshot.child("wanna").getValue().toString().equals(userWanna)){
+                        if(dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both") ){
                             String  name = "",
                                     age = "",
                                     job = "",
@@ -238,8 +238,8 @@ public class CardFragment  extends Fragment {
                                 job = dataSnapshot.child("job").getValue().toString();
                             if(dataSnapshot.child("about").getValue()!=null)
                                 about = dataSnapshot.child("about").getValue().toString();
-                            if(dataSnapshot.child("distance").getValue()!=null)
-                                about = dataSnapshot.child("time").getValue().toString();
+                            if(dataSnapshot.child("LatLng").child("distance").getValue()!=null)
+                                about = dataSnapshot.child("LatLng").child("distance").getValue().toString();
                             if (dataSnapshot.child("profileImageUrl").getValue()!=null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 

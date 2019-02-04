@@ -189,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
                             locationA.setLatitude(latitude);
                             locationA.setLongitude(longitude);
                             Location locationB = new Location("point B");
-                            String latitudeB = dataSnapshot.child("lgROtEnLuGNonWdHMm13dD2dQrj1").child("LatLng").child("latitude").getValue().toString();
-                            String longitudeB = dataSnapshot.child("lgROtEnLuGNonWdHMm13dD2dQrj1").child("LatLng").child("longitude").getValue().toString();
+                            String latitudeB = dataSnapshot.child("08vMTdgm0EWsZqIqEYwJLDWD96t2").child("LatLng").child("latitude").getValue().toString();
+                            String longitudeB = dataSnapshot.child("08vMTdgm0EWsZqIqEYwJLDWD96t2").child("LatLng").child("longitude").getValue().toString();
                             locationB.setLatitude(Double.parseDouble(latitudeB));
                             locationB.setLongitude(Double.parseDouble(longitudeB));
 
