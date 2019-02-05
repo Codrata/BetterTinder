@@ -78,7 +78,8 @@ public class LikeProfile extends AppCompatActivity {
                     if (dataSnapshot.child("name").exists() && dataSnapshot.child("age").exists()) {
                         name = dataSnapshot.child("name").getValue().toString();
                         age = dataSnapshot.child("age").getValue().toString();
-                        mName.setText(name + ", " + age);
+                        mName.setText(name + ", ");
+                        mAge.setText(age);
 
                     } else {
                             mName.setText(name + ",");
@@ -101,7 +102,7 @@ public class LikeProfile extends AppCompatActivity {
 
                     if (dataSnapshot.child("LatLng").child("distance").exists()){
                         distance = dataSnapshot.child("LatLng").child("distance").getValue().toString();
-                        mDistance.setText(distance);
+                        mDistance.setText(distance + " km");
                     }else {
                         mDistance.setText("");
                     }

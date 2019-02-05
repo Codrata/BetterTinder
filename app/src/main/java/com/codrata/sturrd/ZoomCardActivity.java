@@ -35,10 +35,10 @@ public class ZoomCardActivity extends AppCompatActivity {
         mImage = findViewById(R.id.image);
 
         mName.setText(mCardObject.getName() + ", " + mCardObject.getAge());
-        mDistance.setText(mCardObject.getDistance());
+        mDistance.setText(mCardObject.getDistance() + " km");
         mJob.setText(mCardObject.getJob());
         mAbout.setText(mCardObject.getAbout());
-
+        // TODO complete the Fab methods for Like and Nope
         if(!mCardObject.getProfileImageUrl().equals("default"))
             Glide.with(getApplicationContext()).load(mCardObject.getProfileImageUrl()).into(mImage);
     }

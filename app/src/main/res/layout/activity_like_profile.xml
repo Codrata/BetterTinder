@@ -110,23 +110,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
-                android:backgroundTint="@color/colorWhite"
                 android:clickable="true"
-                android:elevation="2sp"
                 android:focusable="true"
-                android:src="@drawable/ic_nope" />
+                android:foreground="@drawable/ic_nope_gif"
+                app:backgroundTint="@android:color/transparent"
+                app:elevation="2sp" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabLikeProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
-                android:onClick="onClick"
-                android:backgroundTint="@color/colorWhite"
                 android:clickable="true"
-                android:elevation="2sp"
                 android:focusable="true"
-                android:src="@drawable/ic_like" />
+                android:foreground="@drawable/ic_like_gif"
+                android:onClick="onClick"
+                app:backgroundTint="@android:color/transparent"
+                app:elevation="2sp" />
         </LinearLayout>
 
     </LinearLayout>
