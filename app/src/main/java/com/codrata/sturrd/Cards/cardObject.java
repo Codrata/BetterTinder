@@ -11,7 +11,7 @@ public class cardObject implements Serializable {
                     about,
                     distance,
                     job;
-    public cardObject(String userId, String name, String age, String about, String time, String job, String profileImageUrl){
+    public cardObject(String userId, String name, String age, String about,  String job, String distance, String profileImageUrl){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -30,13 +30,13 @@ public class cardObject implements Serializable {
     public String getAge(){
         return age;
     }
-    public String getDistance(){return distance; }
     public String getAbout(){
         return about;
     }
     public String getJob(){
         return job;
     }
+    public String getDistance(){return distance; }
     public String getProfileImageUrl(){
         return profileImageUrl;
     }

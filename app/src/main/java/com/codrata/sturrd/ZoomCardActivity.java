@@ -15,6 +15,7 @@ public class ZoomCardActivity extends AppCompatActivity {
 
     private TextView    mName,
                         mJob,
+                        mDistance,
                         mAbout;
 
     private ImageView mImage;
@@ -29,10 +30,12 @@ public class ZoomCardActivity extends AppCompatActivity {
 
         mName = findViewById(R.id.name);
         mJob = findViewById(R.id.job);
+        mDistance = findViewById(R.id.distance);
         mAbout = findViewById(R.id.about);
         mImage = findViewById(R.id.image);
 
         mName.setText(mCardObject.getName() + ", " + mCardObject.getAge());
+        mDistance.setText(mCardObject.getDistance());
         mJob.setText(mCardObject.getJob());
         mAbout.setText(mCardObject.getAbout());
 

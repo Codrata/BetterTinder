@@ -3,6 +3,8 @@ package com.codrata.sturrd.Fragments;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -78,6 +80,7 @@ public class CardFragment  extends Fragment {
         rowItems = new ArrayList<>();
 
         cardAdapter = new cardAdapter(getContext(), R.layout.item_card, rowItems );
+
 
         final SwipeFlingAdapterView flingContainer = view.findViewById(R.id.frame);
 
@@ -228,6 +231,8 @@ public class CardFragment  extends Fragment {
                                     distance = "",
                                     userSex = "",
                                     profileImageUrl = "default";
+
+
                             if(dataSnapshot.child("name").getValue()!=null)
                                 name = dataSnapshot.child("name").getValue().toString();
                             if(dataSnapshot.child("sex").getValue()!=null)
@@ -239,7 +244,7 @@ public class CardFragment  extends Fragment {
                             if(dataSnapshot.child("about").getValue()!=null)
                                 about = dataSnapshot.child("about").getValue().toString();
                             if(dataSnapshot.child("LatLng").child("distance").getValue()!=null)
-                                about = dataSnapshot.child("LatLng").child("distance").getValue().toString();
+                                distance = dataSnapshot.child("LatLng").child("distance").getValue().toString();
                             if (dataSnapshot.child("profileImageUrl").getValue()!=null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
@@ -267,6 +272,22 @@ public class CardFragment  extends Fragment {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void distanceUpdate(final Object dataObject){
+        usersDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

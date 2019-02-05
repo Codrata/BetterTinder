@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                             locationB.setLatitude(Double.parseDouble(latitudeB));
                             locationB.setLongitude(Double.parseDouble(longitudeB));
 
-                            float distance = locationA.distanceTo(locationB);
+                            double distance = locationA.distanceTo(locationB);
 
                             //TODO correct the distance
                             //convert distance to km
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                             Map userLatLng = new HashMap();
                             userLatLng.put("latitude", latitudeString);
                             userLatLng.put("longitude", longitudeString);
-                            userLatLng.put("distance", finalDist + "km");
+                            userLatLng.put("distance", finalDist);
                             usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
                         }
 

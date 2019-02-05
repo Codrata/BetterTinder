@@ -11,6 +11,7 @@
     <TextView
         android:layout_gravity="center"
         android:layout_width="wrap_content"
+        android:textColor="@android:color/darker_gray"
         android:layout_height="wrap_content"
         android:text="@string/oops_no_more_people_around_you"/>
 
@@ -27,21 +28,23 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginBottom="10sp">
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabNope"
-            android:layout_margin="10sp"
-            android:backgroundTint="@color/colorWhite"
-            android:elevation="2sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_nope"/>
+            android:layout_margin="10sp"
+            android:foreground="@drawable/ic_nope_gif"
+            app:backgroundTint="@android:color/transparent"
+            app:elevation="2sp" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabLike"
-            android:layout_margin="10sp"
-            android:backgroundTint="@color/colorWhite"
-            android:elevation="2sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_like"/>
+            android:layout_margin="10sp"
+            android:foreground="@drawable/ic_like_gif"
+            app:backgroundTint="@android:color/transparent"
+            app:elevation="2sp" />
     </LinearLayout>
 </FrameLayout>

@@ -27,10 +27,11 @@ public class LikeProfile extends AppCompatActivity {
     private TextView mName,
             mJob,
             mAbout,
+            mDistance,
             mAge;
 
     private ImageView mImage;
-    private String likeId, name, age, job, about, profileImageUrl, currentUid;
+    private String likeId, name, age, job, about, distance, profileImageUrl, currentUid;
     private FirebaseAuth mAuth;
 
     DatabaseReference mDatabaseUser, mUserConnection;
@@ -48,6 +49,8 @@ public class LikeProfile extends AppCompatActivity {
         mAbout = findViewById(R.id.like_about_profile);
         mImage = findViewById(R.id.like_image_profile);
         mAge = findViewById(R.id.like_age_profile);
+        mDistance = findViewById(R.id.like_distance_profile);
+
 
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(likeId);
         mUserConnection = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -72,17 +75,14 @@ public class LikeProfile extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
 
-                    if (dataSnapshot.child("name").exists()) {
+                    if (dataSnapshot.child("name").exists() && dataSnapshot.child("age").exists()) {
                         name = dataSnapshot.child("name").getValue().toString();
-                        if (dataSnapshot.child("age").exists()) {
-                            age = dataSnapshot.child("age").getValue().toString();
-                            mAge.setText(age);
-                        } else {
+                        age = dataSnapshot.child("age").getValue().toString();
+                        mName.setText(name + ", " + age);
+
+                    } else {
                             mName.setText(name + ",");
                             mAge.setText("");
-                        }
-                    } else {
-                        mName.setText(("No Name"));
                     }
 
                     if (dataSnapshot.child("job").exists()) {
@@ -97,6 +97,13 @@ public class LikeProfile extends AppCompatActivity {
                         mAbout.setText(about);
                     } else {
                         mAbout.setText("No About");
+                    }
+
+                    if (dataSnapshot.child("LatLng").child("distance").exists()){
+                        distance = dataSnapshot.child("LatLng").child("distance").getValue().toString();
+                        mDistance.setText(distance);
+                    }else {
+                        mDistance.setText("");
                     }
                     profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 

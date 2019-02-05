@@ -51,19 +51,37 @@
                 android:textSize="30sp"
                  />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:orientation="horizontal">
 
         <TextView
             android:id="@+id/like_job_profile"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:drawableLeft="@drawable/ic_user"
+            android:layout_gravity="bottom|start"
+            android:drawableLeft="@drawable/ic_person_pin_red_300_24dp"
             android:drawablePadding="10sp"
-            android:drawableTint="@color/colorBlack"
-            android:padding="20sp"
+            android:padding="10sp"
             android:text="job"
             android:textColor="@color/colorBlack"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/like_distance_profile"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:drawableLeft="@drawable/ic_person_pin_circle_red_300_24dp"
+            android:drawablePadding="10sp"
+            android:padding="10sp"
+            android:text="km"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
