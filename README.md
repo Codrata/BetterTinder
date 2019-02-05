@@ -10,3 +10,5 @@
 1 - SwipeCards Implementation;<br />
 2 - Likes;<br/>
 3 - Hookup or Date;<br/>
+4 - Distance between two potential matches;<br/>
+5 - View Likes and Match Up Instantly
