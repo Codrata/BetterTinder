@@ -69,8 +69,9 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
 
                         //TODO correct the distance
                         //convert distance to km
-                        distance = ((int) Math.round(distance / 1000));
-                        String finalDist = String.valueOf(distance);
+                        distance =  Math.round(distance / 1000);
+                        int distanceAB = (int) distance;
+                        String finalDist = String.valueOf(distanceAB);
 
                         userDb.child("LatLng").child(currentUId).child("distance").setValue(finalDist);
 

@@ -196,10 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
                             double distance = locationA.distanceTo(locationB);
 
-                            //TODO correct the distance
-                            //convert distance to km
-                            distance = ((int) Math.round( distance / 1000));
-                            String finalDist = String.valueOf(distance);
 
                             Map userLatLng = new HashMap();
                             userLatLng.put("latitude", latitudeString);
