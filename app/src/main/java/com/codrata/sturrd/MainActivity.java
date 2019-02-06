@@ -198,13 +198,12 @@ public class MainActivity extends AppCompatActivity {
 
                             //TODO correct the distance
                             //convert distance to km
-                            distance = (Math.round(distance / 1000));
+                            distance = ((int) Math.round( distance / 1000));
                             String finalDist = String.valueOf(distance);
 
                             Map userLatLng = new HashMap();
                             userLatLng.put("latitude", latitudeString);
                             userLatLng.put("longitude", longitudeString);
-                            userLatLng.put("distance", finalDist);
                             usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
                         }
 

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -117,6 +118,8 @@ public class CardFragment  extends Fragment {
 
             }
 
+
+
             @Override
             public void onScroll(float scrollProgressPercent) {
             }
@@ -189,13 +192,12 @@ public class CardFragment  extends Fragment {
     private String userWanna;
 
     public void checkUserSex(){
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDb = usersDb.child(user.getUid());
         userDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-
                     if (dataSnapshot.child("interest").getValue() != null)
                         userInterest = dataSnapshot.child("interest").getValue().toString();
                     if (dataSnapshot.child("wanna").getValue() != null)
@@ -223,7 +225,7 @@ public class CardFragment  extends Fragment {
 
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("likes").hasChild(currentUId)) {
                         // TODO add the hookup filter
-                        if(dataSnapshot.child("sex").getValue().toString().equals(userInterest) && dataSnapshot.child("wanna").getValue().toString().equals(userWanna) ){
+                        if((dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both")) && dataSnapshot.child("wanna").getValue().toString().equals(userWanna) ){
                             String  name = "",
                                     age = "",
                                     job = "",
@@ -232,6 +234,9 @@ public class CardFragment  extends Fragment {
                                     userSex = "",
                                     profileImageUrl = "default";
 
+                            mAuth = FirebaseAuth.getInstance();
+                            if(mAuth.getCurrentUser()==null)
+                            currentUId = mAuth.getCurrentUser().getUid();
 
                             if(dataSnapshot.child("name").getValue()!=null)
                                 name = dataSnapshot.child("name").getValue().toString();
@@ -243,12 +248,9 @@ public class CardFragment  extends Fragment {
                                 job = dataSnapshot.child("job").getValue().toString();
                             if(dataSnapshot.child("about").getValue()!=null)
                                 about = dataSnapshot.child("about").getValue().toString();
-                            if(dataSnapshot.child("LatLng").child("distance").getValue()!=null)
-                                distance = dataSnapshot.child("LatLng").child("distance").getValue().toString();
                             if (dataSnapshot.child("profileImageUrl").getValue()!=null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-
-                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, distance, profileImageUrl);
+                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue().toString(), profileImageUrl);
 
                             for(int i = 0; i < rowItems.size();i++)
                                 if(rowItems.get(i) == item)
@@ -276,13 +278,90 @@ public class CardFragment  extends Fragment {
         });
     }
 
-    public void distanceUpdate(final Object dataObject){
+    public void distanceUpdate(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        usersDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                final DatabaseReference userDb = usersDb.child(user.getUid());
+                final String latitudeA = dataSnapshot.child(currentUId).child("LatLng").child("latitude").getValue().toString();
+                final String longitudeA = dataSnapshot.child(currentUId).child("LatLng").child("longitude").getValue().toString();
+
+                userDb.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        final String latitudeB = dataSnapshot.child("LatLng").child("latitude").getValue().toString();
+                        final String longitudeB = dataSnapshot.child("LatLng").child("longitude").getValue().toString();
+                        Location locationA = new Location("point A");
+                        locationA.setLatitude(Double.parseDouble(latitudeA));
+                        locationA.setLongitude(Double.parseDouble(longitudeA));
+                        Location locationB = new Location("point B");
+                        locationB.setLatitude(Double.parseDouble(latitudeB));
+                        locationB.setLongitude(Double.parseDouble(longitudeB));
+
+                        double distance = locationA.distanceTo(locationB);
+
+                        //TODO correct the distance
+                        //convert distance to km
+                        distance = ((int) Math.round( distance / 1000));
+                        String finalDist = String.valueOf(distance);
+
+                        userDb.child("LatLng").child(currentUId).child("distance").setValue(finalDist);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void locationUpdateA(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference userDb = usersDb.child(user.getUid());
         usersDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String latitudeA = dataSnapshot.child(currentUId).child("LatLng").child("latitude").getValue().toString();
+                final String longitudeA = dataSnapshot.child(currentUId).child("LatLng").child("longitude").getValue().toString();
+                userDb.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String latitudeB = dataSnapshot.child("LatLng").child("latitude").getValue().toString();
+                        String longitudeB = dataSnapshot.child("LatLng").child("longitude").getValue().toString();
 
+                        Location locationA = new Location("point A");
+                        locationA.setLatitude(Double.parseDouble(latitudeA));
+                        locationA.setLongitude(Double.parseDouble(longitudeA));
+                        Location locationB = new Location("point B");
+                        locationB.setLatitude(Double.parseDouble(latitudeB));
+                        locationB.setLongitude(Double.parseDouble(longitudeB));
 
+                        double distance = locationA.distanceTo(locationB);
 
+                        //TODO correct the distance
+                        //convert distance to km
+                        distance = ((int) Math.round( distance / 1000));
+                        String finalDist = String.valueOf(distance);
+
+                        usersDb.child("LatLng").child(dataSnapshot.getKey()).child("distance").setValue(finalDist);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
