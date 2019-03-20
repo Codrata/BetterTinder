@@ -248,9 +248,11 @@ public class CardFragment  extends Fragment {
                                 job = dataSnapshot.child("job").getValue().toString();
                             if(dataSnapshot.child("about").getValue()!=null)
                                 about = dataSnapshot.child("about").getValue().toString();
+                            if (dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue() !=null)
+                                distance = dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue().toString();
                             if (dataSnapshot.child("profileImageUrl").getValue()!=null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue().toString(), profileImageUrl);
+                            cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, distance, profileImageUrl);
 
                             for(int i = 0; i < rowItems.size();i++)
                                 if(rowItems.get(i) == item)

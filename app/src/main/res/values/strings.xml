@@ -11,4 +11,12 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="oops_no_more_people_around_you">Oops, no more people around you...</string>
+    <string name="title_activity_new_match_fragment">NewMatchFragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_likes_yet">No Likes Yet</string>
+    <string name="no_matches_yet">No Matches Yet..</string>
+    <string name="no_messages">No messages...</string>
+    <string name="new_likes">New likes</string>
 </resources>

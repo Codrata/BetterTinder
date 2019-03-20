@@ -3,6 +3,7 @@ package com.codrata.sturrd.Likes;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesViewHolders>{
     @Override
     public LikesViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_like_list, null, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_like_list_fragment, null, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutView.setLayoutParams(lp);
         LikesViewHolders rcv = new LikesViewHolders(layoutView);
@@ -51,3 +52,4 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesViewHolders>{
         return this.likeList.size();
     }
 }
+

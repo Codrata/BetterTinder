@@ -1,10 +1,12 @@
 package com.codrata.sturrd;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -15,10 +17,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.MenuItem;
 
-import com.codrata.sturrd.R;
+import com.codrata.sturrd.NotifyFrags.NotifyActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -60,6 +61,24 @@ public class MainActivity extends AppCompatActivity {
 
 
         client = LocationServices.getFusedLocationProviderClient(this);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.navigation_home:
+                        return true;
+
+                    case R.id.navigation_notifications:
+                        Intent NotifyAct = new Intent(getApplicationContext(), NotifyActivity.class);
+                        startActivity(NotifyAct);
+                        break;
+                }
+                return false;
+            }
+        });
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");

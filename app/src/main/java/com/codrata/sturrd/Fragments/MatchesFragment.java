@@ -265,7 +265,6 @@ public class MatchesFragment extends Fragment {
             }
 
         });
-
     }
 
 
