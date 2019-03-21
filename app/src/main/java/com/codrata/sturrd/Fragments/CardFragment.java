@@ -113,9 +113,6 @@ public class CardFragment  extends Fragment {
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
                 Log.d("LIST", "refresh adapter");
-                rowItems.addAll(rowItems);
-                cardAdapter.notifyDataSetChanged();
-
             }
 
 
@@ -224,7 +221,6 @@ public class CardFragment  extends Fragment {
                         return;
 
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("likes").hasChild(currentUId)) {
-                        // TODO add the hookup filter
                         if((dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both")) && dataSnapshot.child("wanna").getValue().toString().equals(userWanna) ){
                             String  name = "",
                                     age = "",

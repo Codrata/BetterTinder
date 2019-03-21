@@ -33,7 +33,7 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
         super(context, resourceId, items);
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public final View getView(int position, View convertView, ViewGroup parent) {
         final cardObject card_item = getItem(position);
 
         mAuth = FirebaseAuth.getInstance();
@@ -47,6 +47,7 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         final DatabaseReference userDb = usersDb.child(card_item.getUserId());
+        final View finalConvertView = convertView;
         usersDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -55,8 +56,18 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
                 userDb.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String latitudeB = dataSnapshot.child("LatLng").child("latitude").getValue().toString();
-                        String longitudeB = dataSnapshot.child("LatLng").child("longitude").getValue().toString();
+                        String latitudeB = "",
+                                longitudeB = "";
+                        if (dataSnapshot.child("LatLng").child("latitude").getValue() != null) {
+                            latitudeB = dataSnapshot.child("LatLng").child("latitude").getValue().toString();
+                        } else {
+                            latitudeB = "0.0";
+                        }
+                        if (dataSnapshot.child("LatLng").child("longitude").getValue() != null) {
+                            longitudeB = dataSnapshot.child("LatLng").child("longitude").getValue().toString();
+                        } else {
+                            longitudeB = "0.0";
+                        }
 
                         Location locationA = new Location("point A");
                         locationA.setLatitude(Double.parseDouble(latitudeA));
@@ -72,6 +83,13 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
                         distance =  Math.round(distance / 1000);
                         int distanceAB = (int) distance;
                         String finalDist = String.valueOf(distanceAB);
+
+
+                        TextView distanceView = finalConvertView.findViewById(R.id.distance);
+
+                        distanceView.setText(card_item.getDistance() + " km");
+
+
 
                         userDb.child("LatLng").child(currentUId).child("distance").setValue(finalDist);
 

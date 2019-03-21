@@ -19,4 +19,10 @@
     <string name="no_matches_yet">No Matches Yet..</string>
     <string name="no_messages">No messages...</string>
     <string name="new_likes">New likes</string>
+    <string name="s_t_u_r_r_d">S t u r r d</string>
+    <string name="new_matches">New Matches</string>
+    <string name="explore_sturrd">Explore Sturrd</string>
+    <string name="messages">Messages</string>
+    <string name="match_s_name">Match\'s Name</string>
+    <string name="user_s_name">User\'s Name</string>
 </resources>

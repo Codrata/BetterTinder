@@ -6,14 +6,16 @@ public class MatchesObject {
             name,
             lastMessage,
             chatId,
-            profileImageUrl;
+            profileImageUrl,
+            distance;
 
-    public MatchesObject(String userId, String name, String profileImageUrl, String chatId, String lastMessage){
+    public MatchesObject(String userId, String name, String profileImageUrl, String chatId, String lastMessage, String distance){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.lastMessage = lastMessage;
         this.chatId = chatId;
+        this.distance = distance;
     }
 
     public String getUserId(){
@@ -31,6 +33,7 @@ public class MatchesObject {
     public String getProfileImageUrl(){
         return profileImageUrl;
     }
+    public String getDistance(){return  distance;}
 
 
     public void setLastMessage(String lastMessage){

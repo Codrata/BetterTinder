@@ -1,28 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10sp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center"
-    android:id="@+id/layout">
-    <ImageView
-        android:layout_marginBottom="10sp"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:src="@mipmap/ic_user_default"
-        android:id="@+id/MatchImage"/>
-    <TextView
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:textColor="@color/colorBlack"
-        android:paddingBottom="20sp"
+    android:orientation="vertical"
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/match_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Match's Name"
-        android:id="@+id/MatchName"
-        android:gravity="center"/>
+        android:layout_centerInParent="true"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="3dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/laycardlinearMatches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/MatchImage"
+                    android:layout_width="60sp"
+                    android:layout_height="60sp"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/ic_user_default" />
+
+                <TextView
+                    android:id="@+id/MatchName"
+                    android:layout_width="wrap_content"
+                    android:layout_toRightOf="@id/MatchImage"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:paddingBottom="5sp"
+                    android:text="@string/match_s_name"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_toEndOf="@id/MatchImage" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@id/MatchName"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_send_small"
+                    android:tint="@color/colorPrimaryDark"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
 
 </LinearLayout>

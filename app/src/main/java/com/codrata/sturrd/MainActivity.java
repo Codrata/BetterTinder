@@ -24,14 +24,11 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 import com.codrata.sturrd.Fragments.CardFragment;
-import com.codrata.sturrd.Fragments.MatchesFragment;
+import com.codrata.sturrd.Fragments.ExploreFragment;
 import com.codrata.sturrd.Fragments.UserFragment;
 
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.ic_tab_user,
-            R.drawable.ic_tab_cards,
+            R.drawable.ic_fire_heart,
             R.drawable.ic_tab_chat
     };
 
@@ -142,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new UserFragment(), "ONE");
         adapter.addFragment(new CardFragment(), "TWO");
-        adapter.addFragment(new MatchesFragment(), "THREE");
+        adapter.addFragment(new ExploreFragment(), "THREE");
         viewPager.setAdapter(adapter);
     }
 
@@ -195,40 +192,18 @@ public class MainActivity extends AppCompatActivity {
                     final double longitude = location.getLongitude();
                     final double latitude = location.getLatitude();
 
+                    String latitudeString = String.valueOf(latitude);
+                    String longitudeString = String.valueOf(longitude);
+
                     //usersDb.child("latitude").child(latitudeString).setValue(true);
                     //usersDb.child("longitude").child(longitudeString).setValue(true);
 
-
-                    usersDb.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String latitudeString = String.valueOf(latitude);
-                            String longitudeString = String.valueOf(longitude);
-                            Location locationA = new Location("point A");
-                            locationA.setLatitude(latitude);
-                            locationA.setLongitude(longitude);
-                            Location locationB = new Location("point B");
-                            String latitudeB = dataSnapshot.child("08vMTdgm0EWsZqIqEYwJLDWD96t2").child("LatLng").child("latitude").getValue().toString();
-                            String longitudeB = dataSnapshot.child("08vMTdgm0EWsZqIqEYwJLDWD96t2").child("LatLng").child("longitude").getValue().toString();
-                            locationB.setLatitude(Double.parseDouble(latitudeB));
-                            locationB.setLongitude(Double.parseDouble(longitudeB));
-
-                            double distance = locationA.distanceTo(locationB);
-
-
-                            Map userLatLng = new HashMap();
-                            userLatLng.put("latitude", latitudeString);
-                            userLatLng.put("longitude", longitudeString);
-                            usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
+                    Map userLatLng = new HashMap();
+                    userLatLng.put("latitude", latitudeString);
+                    userLatLng.put("longitude", longitudeString);
+                    usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
                 }
+
             }
         });
     }
