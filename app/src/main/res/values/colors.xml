@@ -8,4 +8,6 @@
     <color name="colorDeadBackground">#F7F6FB</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#2d2d2d</color>
+    <color name="hint_color_recording">#FF3A3F</color>
+    <color name="edit_text_hint_color">#7C7979</color>
 </resources>

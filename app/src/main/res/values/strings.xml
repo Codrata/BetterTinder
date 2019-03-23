@@ -25,4 +25,6 @@
     <string name="messages">Messages</string>
     <string name="match_s_name">Match\'s Name</string>
     <string name="user_s_name">User\'s Name</string>
+    <string name="cancel">cancel</string>
+    <string name="edit_text_message_hint">message...</string>
 </resources>

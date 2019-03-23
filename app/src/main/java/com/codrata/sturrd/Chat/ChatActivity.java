@@ -1,14 +1,25 @@
 package com.codrata.sturrd.Chat;
 
+import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
+import android.os.Environment;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -22,31 +33,85 @@ import com.google.firebase.database.ValueEventListener;
 import com.codrata.sturrd.R;
 import com.codrata.sturrd.SendNotification;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class ChatActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "chatActivity";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mChatAdapter;
     private LinearLayoutManager mChatLayoutManager;
+
+
+    private MediaRecorder mMediaRecorder;
+    public static final int RequestPermissionCode = 1;
+    String audioSavePathInDevice = null;
+    private File mediaStorageDir;
+
 
     private EditText mSendEditText;
 
     private ImageView   mSendButton,
                         mBack,
-                        mImage;
+                        mImage,
+                        mRecordButton;
 
-    private TextView mName;
+    private TextView mName,
+                    mCancelRecordingButton;
+
+    private long mStartTime = 0;
+
 
     private String currentUserID, matchId, chatId;
 
     DatabaseReference mDatabaseUser, mDatabaseChat;
+
+
+
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - mStartTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            mSendEditText.setHint("Recording " +String.format("%d:%02d", minutes, seconds));
+            mSendEditText.setHintTextColor(getResources().getColor(R.color.hint_color_recording));
+            timerHandler.postDelayed(this, 500);
+        }
+    };
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+
+
+
+
+        mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "Sturrd");
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("App", "failed to create directory");
+            }
+        }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -72,15 +137,62 @@ public class ChatActivity extends AppCompatActivity {
         mImage = findViewById(R.id.image);
 
         mSendEditText = findViewById(R.id.message);
+
         mSendButton = findViewById(R.id.send);
         mBack = findViewById(R.id.back);
+        mRecordButton = findViewById(R.id.record_button);
+
+        mCancelRecordingButton = findViewById(R.id.cancel_recording);
+
+
+
+
+        mSendEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mRecordButton.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.GONE);
+                mCancelRecordingButton.setVisibility(View.GONE);
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mSendButton.setVisibility(View.VISIBLE);
+                mRecordButton.setVisibility(View.GONE);
+                mCancelRecordingButton.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (mSendEditText.getText().toString().isEmpty()) {
+                    mRecordButton.setVisibility(View.VISIBLE);
+                    mSendButton.setVisibility(View.GONE);
+                    mCancelRecordingButton.setVisibility(View.GONE);
+                } else {
+                    mSendEditText.setVisibility(View.VISIBLE);
+                    mCancelRecordingButton.setVisibility(View.GONE);
+                    mRecordButton.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
+
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mMediaRecorder != null) {
+                    stopRecording();
+                    mMediaRecorder = null;
+                }
                 finish();
             }
         });
+
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,13 +201,48 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        mRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkPermission() && mSendEditText.getText().toString().isEmpty()) {
+                    mCancelRecordingButton.setVisibility(View.VISIBLE);
+                    startRecording();
+                    mStartTime = System.currentTimeMillis();
+                    timerHandler.postDelayed(timerRunnable, 0);
+                    mSendEditText.setEnabled(false);
+                    mRecordButton.setVisibility(View.GONE);
+                    Toast.makeText(ChatActivity.this, "recording", Toast.LENGTH_SHORT).show();
+                } else {
+                    requestPermission();
+                }
+            }
+        });
+
+        mCancelRecordingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRecording();
+                timerHandler.removeCallbacks(timerRunnable);
+                mSendEditText.setEnabled(true);
+                mSendEditText.setHint("message..");
+                mSendEditText.setHintTextColor(getResources().getColor(R.color.edit_text_hint_color));
+                mCancelRecordingButton.setVisibility(View.GONE);
+                mRecordButton.setVisibility(View.VISIBLE);
+                Toast.makeText(ChatActivity.this, "stopped", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         getMatchInfo();
     }
 
+
+
     private void sendMessage() {
         String sendMessageText = mSendEditText.getText().toString();
-
         if(!sendMessageText.isEmpty()){
+
             DatabaseReference newMessageDb = mDatabaseChat.push();
 
             Map newMessage = new HashMap();
@@ -211,5 +358,104 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    /**
+     * prepare media recorder
+     */
+    public void MediaRecorderReady(){
+        mMediaRecorder =new MediaRecorder();
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mMediaRecorder.setOutputFile(audioSavePathInDevice);
+    }
+
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(ChatActivity.this, new
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, RequestPermissionCode);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RequestPermissionCode:
+                if (grantResults.length > 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission) {
+                        Toast.makeText(ChatActivity.this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ChatActivity.this,"Permission Denied",Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+        }
+    }
+
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    private void startRecording() {
+        audioSavePathInDevice = mediaStorageDir.getAbsolutePath()+ "/" + createRandomAudioFileName();
+        MediaRecorderReady();
+        try {
+            Toast.makeText(ChatActivity.this, audioSavePathInDevice,Toast.LENGTH_SHORT).show();
+            mMediaRecorder.prepare();
+            mMediaRecorder.start();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void stopRecording() {
+        mMediaRecorder.stop();
+        mMediaRecorder.release();
+        mMediaRecorder = null;
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timerHandler.removeCallbacks(timerRunnable);
+    }
+
+
+    public String createRandomAudioFileName(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("VN-").append(getCurrentTimeAndDate()).append(".3gp");
+
+        return builder.toString();
+    }
+
+
+    public String getCurrentTimeAndDate() {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+      return formattedDate;
     }
 }

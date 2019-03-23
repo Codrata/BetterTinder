@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:clipToPadding="false"
-    app:outlineProvider="bounds"
     android:paddingLeft="10sp"
     android:paddingTop="10sp"
     android:paddingRight="10sp"
