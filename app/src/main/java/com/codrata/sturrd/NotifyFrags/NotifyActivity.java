@@ -26,7 +26,7 @@ public class NotifyActivity extends AppCompatActivity {
     private int[] tabIcons = {
             R.drawable.ic_two_hearts_new,
             R.drawable.ic_chats_new,
-            R.drawable.ic_in_love_outl
+            R.drawable.ic_moments
     };
 
 

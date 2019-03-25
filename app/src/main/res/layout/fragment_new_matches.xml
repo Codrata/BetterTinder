@@ -12,6 +12,23 @@
         android:id="@+id/layoutNewMatches"
         android:orientation="vertical">
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20sp"
+            android:paddingTop="30sp"
+            android:paddingBottom="5sp"
+            android:text="@string/new_likes"
+            app:fontFamily="@font/font_montserrat"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/likeRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"/>
+
+        <TextView
             android:paddingTop="30sp"
             android:paddingLeft="20sp"
             android:paddingBottom="5sp"

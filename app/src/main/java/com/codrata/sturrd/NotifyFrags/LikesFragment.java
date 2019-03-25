@@ -55,14 +55,12 @@ public class LikesFragment extends Fragment {
 
         currentUId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        getNewLikes();
-        getUserLikeId();
 
         return view;
     }
 
     private void getNewLikes(){
-        mLikes = view.findViewById(R.id.likesRecycler);
+        mLikes = view.findViewById(R.id.likeRecycler);
         mLikes.setNestedScrollingEnabled(true);
         mLikes.setHasFixedSize(false);
         mLikesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

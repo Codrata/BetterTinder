@@ -101,6 +101,7 @@ public class LikeProfile extends AppCompatActivity {
                     }else {
                         mDistance.setText("");
                     }
+
                     profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
 

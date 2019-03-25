@@ -202,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
                     Map userLatLng = new HashMap();
                     userLatLng.put("latitude", latitudeString);
                     userLatLng.put("longitude", longitudeString);
+
+
                     usersDb.child(currentUId).child("LatLng").updateChildren(userLatLng);
                 }
 

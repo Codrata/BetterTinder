@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codrata.sturrd.Likes.LikesAdapter;
+import com.codrata.sturrd.Likes.LikesObject;
 import com.codrata.sturrd.Matches.MatchesAdapter;
 import com.codrata.sturrd.Matches.MatchesObject;
 import com.codrata.sturrd.R;
@@ -27,10 +29,10 @@ import java.util.List;
 
 public class NewMatchesFrag extends Fragment {
     private View view;
-    private RecyclerView mMatch;
+    private RecyclerView mMatch, mLikes;
     private String currentUserID;
-    private RecyclerView.LayoutManager mMatchesLayoutManager;
-    private RecyclerView.Adapter mMatchesAdapter;
+    private RecyclerView.LayoutManager mMatchesLayoutManager, mLikesLayoutManager;
+    private RecyclerView.Adapter mMatchesAdapter, mLikesAdapter;
 
 
 
@@ -58,7 +60,40 @@ public class NewMatchesFrag extends Fragment {
 
         getUserMatchId();
 
+        getUserLikeId();
+
+        getNewLikes();
+
         return view;
+    }
+
+    private void getNewLikes(){
+        mLikes = view.findViewById(R.id.likeRecycler);
+        mLikes.setNestedScrollingEnabled(true);
+        mLikes.setHasFixedSize(false);
+        mLikesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        mLikes.setLayoutManager(mLikesLayoutManager);
+        mLikesAdapter = new LikesAdapter(getDataSetLikes(), getContext());
+        mLikes.setAdapter(mLikesAdapter);
+    }
+
+    private void getUserLikeId() {
+        DatabaseReference likeDb = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("likes");
+        likeDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for(DataSnapshot like : dataSnapshot.getChildren()){
+                        FetchLikeInformation(like.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void getNewMatches(){
@@ -139,6 +174,53 @@ public class NewMatchesFrag extends Fragment {
 
     }
 
+
+
+    private void FetchLikeInformation(String key) {
+        for(int i = 0; i < resultsLikes.size(); i++){
+            if(resultsLikes.get(i).getUserId().equals(key))
+                return;
+        }
+
+        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("Users").child(key);
+        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String  userId = dataSnapshot.getKey(),
+                            name = "",
+                            profileImageUrl = "";
+
+                    if(dataSnapshot.child("name").getValue()!=null)
+                        name = dataSnapshot.child("name").getValue().toString();
+                    if(dataSnapshot.child("profileImageUrl").getValue()!=null)
+                        profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+
+
+
+                    for(int i = 0; i < resultsLikes.size(); i++){
+                        if(resultsLikes.get(i).getUserId().equals(userId))
+                            return;
+                    }
+
+                    LikesObject obj = new LikesObject(userId, name, profileImageUrl);
+                    resultsLikes.add(obj);
+                    mLikesAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private ArrayList<LikesObject> resultsLikes = new ArrayList<>();
+    private List<LikesObject> getDataSetLikes() {
+        return resultsLikes;
+    }
 
 
     private ArrayList<MatchesObject> resultsMatches = new ArrayList<>();

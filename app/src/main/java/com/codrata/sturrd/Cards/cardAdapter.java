@@ -51,6 +51,7 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
         usersDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 final String latitudeA = dataSnapshot.child(currentUId).child("LatLng").child("latitude").getValue().toString();
                 final String longitudeA = dataSnapshot.child(currentUId).child("LatLng").child("longitude").getValue().toString();
                 userDb.addValueEventListener(new ValueEventListener() {
@@ -87,7 +88,7 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
 
                         TextView distanceView = finalConvertView.findViewById(R.id.distance);
 
-                        distanceView.setText(card_item.getDistance() + " km");
+                        distanceView.setText(finalDist + " km");
 
 
 
@@ -110,10 +111,10 @@ public class cardAdapter extends ArrayAdapter<cardObject> {
 
         TextView name = convertView.findViewById(R.id.name);
         ImageView image = convertView.findViewById(R.id.image);
-        TextView distance = convertView.findViewById(R.id.distance);
+       // TextView distance = convertView.findViewById(R.id.distance);
 
         name.setText(card_item.getName() + ", " + card_item.getAge());
-        distance.setText(card_item.getDistance() + " km");
+       // distance.setText(card_item.getDistance() + " km");
 
         if (!card_item.getProfileImageUrl().equals("default"))
             Glide.with(convertView.getContext()).load(card_item.getProfileImageUrl()).into(image);

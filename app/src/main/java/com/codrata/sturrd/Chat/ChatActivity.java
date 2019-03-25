@@ -403,6 +403,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+
+
     public boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(),
                 WRITE_EXTERNAL_STORAGE);
