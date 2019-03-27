@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:padding="20dp"
+            android:layout_gravity="center_vertical"
             android:text="@string/match_s_name"
             app:fontFamily="@font/font_montserrat"
             android:textColor="@color/colorBlack"
