@@ -5,66 +5,55 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
     android:orientation="vertical">
 
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/MatchName"
-        app:layout_constraintTop_toTopOf="@+id/MatchName">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:weightSum="4">
 
 
         <ImageView
             android:id="@+id/MatchImage"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@mipmap/ic_user_default"
-            app:layout_constraintEnd_toStartOf="@+id/MatchName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_user_default" />
 
         <TextView
             android:id="@+id/MatchName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
+            android:layout_weight="2"
+            android:padding="20dp"
             android:text="@string/match_s_name"
+            app:fontFamily="@font/font_montserrat"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toEndOf="@+id/MatchImage" />
+            android:textStyle="normal" />
+
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="193dp"
-            android:layout_marginRight="193dp"
-            android:foregroundGravity="end"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:src="@drawable/ic_send_small"
-            android:tint="@color/colorPrimaryDark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/MatchName"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:tint="@color/colorPrimaryDark" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
         android:background="@android:color/darker_gray" />
 
 
