@@ -2,13 +2,14 @@ package com.codrata.sturrd.Chat;
 
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -23,6 +24,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.codrata.sturrd.R;
+import com.codrata.sturrd.SendNotification;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,15 +35,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.codrata.sturrd.R;
-import com.codrata.sturrd.SendNotification;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +58,10 @@ public class ChatActivity extends AppCompatActivity {
     private LinearLayoutManager mChatLayoutManager;
 
 
+
     private MediaRecorder mMediaRecorder;
     public static final int RequestPermissionCode = 1;
-    String audioSavePathInDevice = null;
+    String audioSavePath = null;
     private File mediaStorageDir;
 
 
@@ -64,10 +70,11 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView   mSendButton,
                         mBack,
                         mImage,
-                        mRecordButton;
+            mRecordButton,
+            mCancelRecordingButton;
 
-    private TextView mName,
-                    mCancelRecordingButton;
+
+    private TextView mName, mSendAudio;
 
     private long mStartTime = 0;
 
@@ -75,6 +82,7 @@ public class ChatActivity extends AppCompatActivity {
     private String currentUserID, matchId, chatId;
 
     DatabaseReference mDatabaseUser, mDatabaseChat;
+    private StorageReference mStorageReference;
 
 
 
@@ -92,8 +100,7 @@ public class ChatActivity extends AppCompatActivity {
             timerHandler.postDelayed(this, 500);
         }
     };
-
-
+    private String filename;
 
 
     @Override
@@ -122,6 +129,9 @@ public class ChatActivity extends AppCompatActivity {
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("connections").child("matches").child(matchId).child("ChatId");
         mDatabaseChat = FirebaseDatabase.getInstance().getReference().child("Chat");
 
+        //fireBase storage
+        mStorageReference = FirebaseStorage.getInstance().getReference();
+
         getChatId();
 
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -133,6 +143,7 @@ public class ChatActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mChatAdapter);
 
 
+
         mName = findViewById(R.id.name);
         mImage = findViewById(R.id.image);
 
@@ -142,7 +153,8 @@ public class ChatActivity extends AppCompatActivity {
         mBack = findViewById(R.id.back);
         mRecordButton = findViewById(R.id.record_button);
 
-        mCancelRecordingButton = findViewById(R.id.cancel_recording);
+        mCancelRecordingButton = (ImageView) findViewById(R.id.cancel_recording);
+        mSendAudio = findViewById(R.id.send_audio);
 
 
 
@@ -153,7 +165,7 @@ public class ChatActivity extends AppCompatActivity {
                 mRecordButton.setVisibility(View.VISIBLE);
                 mSendButton.setVisibility(View.GONE);
                 mCancelRecordingButton.setVisibility(View.GONE);
-
+                mSendAudio.setVisibility(View.GONE);
 
             }
 
@@ -162,6 +174,7 @@ public class ChatActivity extends AppCompatActivity {
                 mSendButton.setVisibility(View.VISIBLE);
                 mRecordButton.setVisibility(View.GONE);
                 mCancelRecordingButton.setVisibility(View.GONE);
+                mSendAudio.setVisibility(View.GONE);
 
             }
 
@@ -171,15 +184,15 @@ public class ChatActivity extends AppCompatActivity {
                     mRecordButton.setVisibility(View.VISIBLE);
                     mSendButton.setVisibility(View.GONE);
                     mCancelRecordingButton.setVisibility(View.GONE);
+                    mSendAudio.setVisibility(View.GONE);
                 } else {
                     mSendEditText.setVisibility(View.VISIBLE);
                     mCancelRecordingButton.setVisibility(View.GONE);
                     mRecordButton.setVisibility(View.GONE);
+                    mSendAudio.setVisibility(View.GONE);
                 }
-
             }
         });
-
 
 
         mBack.setOnClickListener(new View.OnClickListener() {
@@ -201,16 +214,19 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (checkPermission() && mSendEditText.getText().toString().isEmpty()) {
                     mCancelRecordingButton.setVisibility(View.VISIBLE);
+                    mSendAudio.setVisibility(View.VISIBLE);
                     startRecording();
                     mStartTime = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnable, 0);
                     mSendEditText.setEnabled(false);
                     mRecordButton.setVisibility(View.GONE);
+
                     Toast.makeText(ChatActivity.this, "recording", Toast.LENGTH_SHORT).show();
                 } else {
                     requestPermission();
@@ -218,25 +234,44 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+
         mCancelRecordingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 stopRecording();
+                mSendAudio.setVisibility(View.GONE);
                 timerHandler.removeCallbacks(timerRunnable);
                 mSendEditText.setEnabled(true);
                 mSendEditText.setHint("message..");
                 mSendEditText.setHintTextColor(getResources().getColor(R.color.edit_text_hint_color));
                 mCancelRecordingButton.setVisibility(View.GONE);
                 mRecordButton.setVisibility(View.VISIBLE);
-                Toast.makeText(ChatActivity.this, "stopped", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         });
 
 
+        mSendAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRecording();
+                timerHandler.removeCallbacks(timerRunnable);
+
+                Toast.makeText(ChatActivity.this, "Sending", Toast.LENGTH_SHORT).show();
+                uploadAudio();
+                mSendEditText.setEnabled(true);
+                mCancelRecordingButton.setVisibility(View.GONE);
+                mRecordButton.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.GONE);
+                mSendAudio.setVisibility(View.GONE);
+                mSendEditText.setHint("message..");
+                mSendEditText.setHintTextColor(getResources().getColor(R.color.edit_text_hint_color));
+            }
+        });
+
 
         getMatchInfo();
     }
-
 
 
     private void sendMessage() {
@@ -257,6 +292,7 @@ public class ChatActivity extends AppCompatActivity {
         mSendEditText.setText(null);
     }
 
+
     private void getChatId(){
         mDatabaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -275,6 +311,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+
     private void getChatMessages() {
         mDatabaseChat.addChildEventListener(new ChildEventListener() {
             @Override
@@ -283,9 +320,12 @@ public class ChatActivity extends AppCompatActivity {
                     String message = null;
                     String createdByUser = null;
 
+                    ArrayList<String> audioList = new ArrayList<>();
+
                     if(dataSnapshot.child("text").getValue()!=null){
                         message = dataSnapshot.child("text").getValue().toString();
                     }
+
                     if(dataSnapshot.child("createdByUser").getValue()!=null){
                         createdByUser = dataSnapshot.child("createdByUser").getValue().toString();
                     }
@@ -361,6 +401,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+    //************************************* Audio Methods ************* //
     /**
      * prepare media recorder
      */
@@ -369,7 +410,8 @@ public class ChatActivity extends AppCompatActivity {
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        mMediaRecorder.setOutputFile(audioSavePathInDevice);
+        mMediaRecorder.setOutputFile(audioSavePath);
+
     }
 
 
@@ -403,8 +445,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
-
     public boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(),
                 WRITE_EXTERNAL_STORAGE);
@@ -416,16 +456,18 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void startRecording() {
-        audioSavePathInDevice = mediaStorageDir.getAbsolutePath()+ "/" + createRandomAudioFileName();
+        filename = createRandomAudioFileName();
+        Log.d(LOG_TAG, "start recording file name " + filename);
+        audioSavePath = mediaStorageDir.getAbsolutePath() + "/" + filename;
+        Log.d(LOG_TAG, "start recording path " + audioSavePath);
         MediaRecorderReady();
         try {
-            Toast.makeText(ChatActivity.this, audioSavePathInDevice,Toast.LENGTH_SHORT).show();
+            Toast.makeText(ChatActivity.this, audioSavePath, Toast.LENGTH_SHORT).show();
             mMediaRecorder.prepare();
             mMediaRecorder.start();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
-
             e.printStackTrace();
         }
 
@@ -433,16 +475,20 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void stopRecording() {
-        mMediaRecorder.stop();
-        mMediaRecorder.release();
-        mMediaRecorder = null;
-
+        if (mMediaRecorder != null) {
+            mMediaRecorder.stop();
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
         timerHandler.removeCallbacks(timerRunnable);
+
+
     }
 
 
@@ -458,6 +504,32 @@ public class ChatActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(c.getTime());
-      return formattedDate;
+        return formattedDate;
+    }
+
+
+    private void uploadAudio() {
+        StorageReference filePath = mStorageReference.child("Audio").child(filename);
+        Log.d(LOG_TAG, "file name to be Uploaded " + filename);
+        Uri uri = Uri.fromFile(new File(audioSavePath));
+        Log.d(LOG_TAG, "file path to be Uploaded " + audioSavePath);
+
+
+        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(ChatActivity.this, "Upload finished", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ChatActivity.this, "Failed to send audio", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void deleteAudio() {
+
     }
 }
