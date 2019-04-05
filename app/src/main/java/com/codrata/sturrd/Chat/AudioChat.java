@@ -2,22 +2,26 @@ package com.codrata.sturrd.Chat;
 
 public class AudioChat {
     private Boolean currentUser;
-    private String mAudioUri;
+    private String audioUri;
 
 
     public AudioChat(Boolean currentUser, String audioUri) {
         this.currentUser = currentUser;
-        this.mAudioUri = audioUri;
+        this.audioUri = audioUri;
     }
 
 
-    public String getAudioUri() {
-        return mAudioUri;
-    }
+    public String getAudioUri() { return audioUri; }
+
+    public void setmAudioUri(String userID){ this.audioUri = audioUri;}
 
     public Boolean getCurrentUser() {
         return currentUser;
     }
+    public void setCurrentUser(Boolean currentUser){
+        this.currentUser = currentUser;
+    }
+
 
 
 }

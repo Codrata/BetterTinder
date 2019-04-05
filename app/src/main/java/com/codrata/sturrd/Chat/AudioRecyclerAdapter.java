@@ -21,13 +21,13 @@ import java.util.List;
 public class AudioRecyclerAdapter extends RecyclerView.Adapter<AudioRecyclerAdapter.ViewHolder> {
 
     private final LayoutInflater mLayoutInflater;
-    private List<String> audioList;
-    private Context mContext;
+    private List<AudioChat> audioList;
+    private Context context;
 
-    public AudioRecyclerAdapter(List<String> chatList, Context context) {
-        this.audioList = chatList;
-        this.mContext = context;
-        mLayoutInflater = LayoutInflater.from(mContext);
+    public AudioRecyclerAdapter(List<AudioChat> audioList, Context context) {
+        this.audioList = audioList;
+        this.context = context;
+        mLayoutInflater = LayoutInflater.from(context);
     }
 
 
@@ -60,11 +60,11 @@ public class AudioRecyclerAdapter extends RecyclerView.Adapter<AudioRecyclerAdap
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mAudioContainer = (LinearLayout) itemView.findViewById(R.id.audio_container);
-            audioImage = (ImageView) itemView.findViewById(R.id.audio_image_view);
+            mAudioContainer = itemView.findViewById(R.id.audio_container);
+            audioImage = itemView.findViewById(R.id.audio_image_view);
             seekBar = itemView.findViewById(R.id.audio_seek_bar);
-            playImage = (ImageView) itemView.findViewById(R.id.audio_play_button);
-            audioLayout = (LinearLayout) itemView.findViewById(R.id.audio_layout);
+            playImage = itemView.findViewById(R.id.audio_play_button);
+            audioLayout = itemView.findViewById(R.id.audio_layout);
 
         }
     }

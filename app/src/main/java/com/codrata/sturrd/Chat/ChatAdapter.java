@@ -13,9 +13,7 @@ import com.codrata.sturrd.R;
 
 import java.util.List;
 
-/**
- * Created by manel on 10/31/2017.
- */
+
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders>{
     private List<ChatObject> chatList;
