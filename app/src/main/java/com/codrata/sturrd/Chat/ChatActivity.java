@@ -57,6 +57,8 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView.Adapter mChatAdapter;
     private LinearLayoutManager mChatLayoutManager;
 
+    private ArrayList<Object> chat;
+
 
 
     private MediaRecorder mMediaRecorder;
@@ -101,7 +103,103 @@ public class ChatActivity extends AppCompatActivity {
         }
     };
     private String filename;
+    private ArrayList<Object> resultsChat = new ArrayList<Object>();
 
+
+    private void sendMessage() {
+        String sendMessageText = mSendEditText.getText().toString();
+        if (!sendMessageText.isEmpty()) {
+
+            DatabaseReference newMessageDb = mDatabaseChat.push();
+
+            Map newMessage = new HashMap();
+            newMessage.put("createdByUser", currentUserID);
+            newMessage.put("text", sendMessageText);
+
+            SendNotification sendNotification = new SendNotification();
+            sendNotification.SendNotification(sendMessageText, "new Message!", matchId);
+
+            newMessageDb.setValue(newMessage);
+        }
+        mSendEditText.setText(null);
+    }
+
+
+    private void getChatId() {
+        mDatabaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    chatId = dataSnapshot.getValue().toString();
+                    mDatabaseChat = mDatabaseChat.child(chatId);
+                    getChatMessages();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getChatMessages() {
+        mDatabaseChat.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    String message = null;
+                    String createdByUser = null;
+
+
+                    if (dataSnapshot.child("text").getValue() != null) {
+                        message = dataSnapshot.child("text").getValue().toString();
+                    }
+
+                    if (dataSnapshot.child("createdByUser").getValue() != null) {
+                        createdByUser = dataSnapshot.child("createdByUser").getValue().toString();
+                    }
+
+                    if (message != null && createdByUser != null) {
+                        Boolean currentUserBoolean = false;
+                        if (createdByUser.equals(currentUserID)) {
+                            currentUserBoolean = true;
+                        }
+                        ChatObject newMessage = new ChatObject(message, currentUserBoolean);
+                        resultsChat.add(newMessage);
+                        mChatLayoutManager.scrollToPosition(resultsChat.size() - 1);
+                        mChatAdapter.notifyDataSetChanged();
+
+                        mRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
+                        }, 1000);
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +238,9 @@ public class ChatActivity extends AppCompatActivity {
         mChatLayoutManager.setSmoothScrollbarEnabled(true);
         mRecyclerView.setLayoutManager(mChatLayoutManager);
         mChatAdapter = new ChatAdapter(getDataSetChat(), this);
+        // Bind adapter to recycler view object
         mRecyclerView.setAdapter(mChatAdapter);
+        // mRecyclerView.setAdapter(mChatAdapter);
 
 
 
@@ -255,6 +355,10 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 stopRecording();
+
+                resultsChat.add(new AudioMessage("blaaa"));
+                mChatLayoutManager.scrollToPosition(resultsChat.size() - 1);
+                mChatAdapter.notifyDataSetChanged();
                 timerHandler.removeCallbacks(timerRunnable);
 
                 Toast.makeText(ChatActivity.this, "Sending", Toast.LENGTH_SHORT).show();
@@ -273,102 +377,7 @@ public class ChatActivity extends AppCompatActivity {
         getMatchInfo();
     }
 
-
-    private void sendMessage() {
-        String sendMessageText = mSendEditText.getText().toString();
-        if(!sendMessageText.isEmpty()){
-
-            DatabaseReference newMessageDb = mDatabaseChat.push();
-
-            Map newMessage = new HashMap();
-            newMessage.put("createdByUser", currentUserID);
-            newMessage.put("text", sendMessageText);
-
-            SendNotification sendNotification = new SendNotification();
-            sendNotification.SendNotification(sendMessageText, "new Message!", matchId);
-
-            newMessageDb.setValue(newMessage);
-        }
-        mSendEditText.setText(null);
-    }
-
-
-    private void getChatId(){
-        mDatabaseUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    chatId = dataSnapshot.getValue().toString();
-                    mDatabaseChat = mDatabaseChat.child(chatId);
-                    getChatMessages();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
-    private void getChatMessages() {
-        mDatabaseChat.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()){
-                    String message = null;
-                    String createdByUser = null;
-
-                    ArrayList<String> audioList = new ArrayList<>();
-
-                    if(dataSnapshot.child("text").getValue()!=null){
-                        message = dataSnapshot.child("text").getValue().toString();
-                    }
-
-                    if(dataSnapshot.child("createdByUser").getValue()!=null){
-                        createdByUser = dataSnapshot.child("createdByUser").getValue().toString();
-                    }
-
-                    if(message!=null && createdByUser!=null){
-                        Boolean currentUserBoolean = false;
-                        if(createdByUser.equals(currentUserID)){
-                            currentUserBoolean = true;
-                        }
-                        ChatObject newMessage = new ChatObject(message, currentUserBoolean);
-                        resultsChat.add(newMessage);
-                        mChatLayoutManager.scrollToPosition(resultsChat.size() - 1);
-                        mChatAdapter.notifyDataSetChanged();
-
-                        mRecyclerView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-                            }
-                        }, 1000);
-
-                    }
-                }
-
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-
-    private ArrayList<ChatObject> resultsChat = new ArrayList<ChatObject>();
-    private List<ChatObject> getDataSetChat() {
+    private List<Object> getDataSetChat() {
         return resultsChat;
     }
 

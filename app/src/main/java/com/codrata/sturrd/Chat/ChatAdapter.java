@@ -2,6 +2,7 @@ package com.codrata.sturrd.Chat;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -17,38 +18,84 @@ import java.util.List;
  * Created by manel on 10/31/2017.
  */
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders>{
-    private List<ChatObject> chatList;
+public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int AUDIO_MESSAGE = 0, TEXT_MESSAGE = 1;
     private Context context;
+    private List<Object> chatList;
 
-
-    public ChatAdapter(List<ChatObject> matchesList, Context context){
+    public ChatAdapter(List<Object> matchesList, Context context) {
         this.chatList = matchesList;
         this.context = context;
     }
 
+    //Returns the view type of the item at position for the purposes of view recycling.
     @Override
-    public ChatViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        if (chatList.get(position) instanceof AudioMessage) {
+            return AUDIO_MESSAGE;
+        } else if (chatList.get(position) instanceof ChatObject) {
+            return TEXT_MESSAGE;
+        }
+        return -1;
+    }
 
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, null, false);
-        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutView.setLayoutParams(lp);
-        ChatViewHolders rcv = new ChatViewHolders(layoutView);
 
-        return rcv;
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+
+        switch (viewType) {
+
+            case AUDIO_MESSAGE:
+                View v1 = inflater.inflate(R.layout.item_audio_message, viewGroup, false);
+                viewHolder = new AudioViewHolder(v1);
+                break;
+            case TEXT_MESSAGE:
+                View v2 = inflater.inflate(R.layout.item_message, viewGroup, false);
+                RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                v2.setLayoutParams(lp);
+                viewHolder = new ChatViewHolders(v2);
+                break;
+            default:
+                View v = inflater.inflate(R.layout.item_audio_message, viewGroup, false);
+                RecyclerView.LayoutParams l = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                v.setLayoutParams(l);
+                viewHolder = new ChatViewHolders(v);
+                break;
+        }
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ChatViewHolders holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case TEXT_MESSAGE:
+                ChatViewHolders vh1 = (ChatViewHolders) holder;
+                configureChatViewHolder(vh1, position);
+                break;
+            case AUDIO_MESSAGE:
+                AudioViewHolder vh2 = (AudioViewHolder) holder;
+                configureAudioViewHolder(vh2, position);
+                break;
+        }
+
+    }
+
+
+    private void configureChatViewHolder(ChatViewHolders holder, int position) {
+        ChatObject chatObjectList = (ChatObject) chatList.get(position);
 
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.mMessage.getLayoutParams();
         params.leftMargin = 20; params.rightMargin = 20;
         holder.mMessage.setLayoutParams(params);
 
-        holder.mMessage.setText(chatList.get(position).getMessage());
+        holder.mMessage.setText(chatObjectList.getMessage());
 
 
-        if(chatList.get(position).getCurrentUser()){
+        if (chatObjectList.getCurrentUser()) {
 
             holder.mMessage.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
 
@@ -71,6 +118,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolders>{
 
         }
 
+
+    }
+
+    private void configureAudioViewHolder(AudioViewHolder holder, int position) {
+        AudioMessage audioMessageList = (AudioMessage) chatList.get(position);
+
+        if (audioMessageList.getAudioUrl() != null) {
+            holder.audioLayout.setGravity(Gravity.END);
+        } else {
+
+            holder.audioLayout.setVisibility(View.VISIBLE);
+        }
 
     }
 

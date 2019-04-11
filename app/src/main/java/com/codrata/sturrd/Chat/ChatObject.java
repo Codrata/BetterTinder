@@ -13,6 +13,7 @@ public class ChatObject {
         this.message = message;
         this.currentUser = currentUser;
 
+
     }
 
 
