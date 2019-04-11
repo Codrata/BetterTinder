@@ -1,8 +1,6 @@
 package com.codrata.sturrd.Chat;
 
-/**
- * Created by manel on 10/31/2017.
- */
+
 
 public class ChatObject {
     private String message;

@@ -14,9 +14,7 @@ import com.codrata.sturrd.R;
 
 import java.util.List;
 
-/**
- * Created by manel on 10/31/2017.
- */
+
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int AUDIO_MESSAGE = 0, TEXT_MESSAGE = 1;
