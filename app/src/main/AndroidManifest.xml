@@ -16,7 +16,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NotifyFrags.NotifyActivity"></activity>
+        <activity android:name=".NotifyActivity"></activity>
         <activity
             android:name=".Login.LauncherActivity"
             android:theme="@style/AppTheme.Launcher">

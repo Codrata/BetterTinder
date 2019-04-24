@@ -19,7 +19,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.codrata.sturrd.NotifyFrags.NotifyActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;

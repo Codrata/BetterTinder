@@ -1,4 +1,4 @@
-package com.codrata.sturrd.NotifyFrags;
+package com.codrata.sturrd;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -14,8 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.codrata.sturrd.MainActivity;
-import com.codrata.sturrd.R;
+import com.codrata.sturrd.NotifyFrags.MomentsFragment;
+import com.codrata.sturrd.NotifyFrags.MessagesFragment;
+import com.codrata.sturrd.NotifyFrags.NewMatchesFrag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +105,7 @@ public class NotifyActivity extends AppCompatActivity {
         NotifyActivity.ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new NewMatchesFrag(), "MATCHES");
         adapter.addFragment(new MessagesFragment(), "MESSAGES");
-        adapter.addFragment(new LikesFragment(), "LIKES");
+        adapter.addFragment(new MomentsFragment(), "LIKES");
         viewPager.setAdapter(adapter);
     }
 

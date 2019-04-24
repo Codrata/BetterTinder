@@ -37,7 +37,7 @@ import com.codrata.sturrd.ZoomCardActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardFragment  extends Fragment {
+public class CardFragment extends Fragment {
 
     private cardAdapter cardAdapter;
 
@@ -72,7 +72,7 @@ public class CardFragment  extends Fragment {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser()==null)
+        if (mAuth.getCurrentUser() == null)
             return view;
         currentUId = mAuth.getCurrentUser().getUid();
 
@@ -80,7 +80,7 @@ public class CardFragment  extends Fragment {
 
         rowItems = new ArrayList<>();
 
-        cardAdapter = new cardAdapter(getContext(), R.layout.item_card, rowItems );
+        cardAdapter = new cardAdapter(getContext(), R.layout.item_card, rowItems);
 
 
         final SwipeFlingAdapterView flingContainer = view.findViewById(R.id.frame);
@@ -116,7 +116,6 @@ public class CardFragment  extends Fragment {
             }
 
 
-
             @Override
             public void onScroll(float scrollProgressPercent) {
             }
@@ -135,21 +134,19 @@ public class CardFragment  extends Fragment {
         });
 
 
-
-
         FloatingActionButton fabLike = view.findViewById(R.id.fabLike);
         FloatingActionButton fabNope = view.findViewById(R.id.fabNope);
         fabLike.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                if(rowItems.size()!=0)
+            public void onClick(View v) {
+                if (rowItems.size() != 0)
                     flingContainer.getTopCardListener().selectRight();
             }
         });
         fabNope.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                if(rowItems.size()!=0)
+            public void onClick(View v) {
+                if (rowItems.size() != 0)
                     flingContainer.getTopCardListener().selectLeft();
             }
         });
@@ -163,7 +160,7 @@ public class CardFragment  extends Fragment {
         currentUserConnectionsDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     Toast.makeText(getContext(), "new Connection", Toast.LENGTH_LONG).show();
 
                     String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
@@ -185,16 +182,16 @@ public class CardFragment  extends Fragment {
         });
     }
 
-    private String  userInterest;
+    private String userInterest;
     private String userWanna;
 
-    public void checkUserSex(){
+    public void checkUserSex() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDb = usersDb.child(user.getUid());
         userDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     if (dataSnapshot.child("interest").getValue() != null)
                         userInterest = dataSnapshot.child("interest").getValue().toString();
                     if (dataSnapshot.child("wanna").getValue() != null)
@@ -205,6 +202,7 @@ public class CardFragment  extends Fragment {
 
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -212,17 +210,17 @@ public class CardFragment  extends Fragment {
         });
     }
 
-    public void getUsersInfo(){
+    public void getUsersInfo() {
         usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.child("sex").getValue() != null) {
-                    if(dataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid()))
+                    if (dataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid()))
                         return;
 
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("likes").hasChild(currentUId)) {
-                        if((dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both")) && dataSnapshot.child("wanna").getValue().toString().equals(userWanna) ){
-                            String  name = "",
+                        if ((dataSnapshot.child("sex").getValue().toString().equals(userInterest) || userInterest.equals("Both")) && dataSnapshot.child("wanna").getValue().toString().equals(userWanna)) {
+                            String name = "",
                                     age = "",
                                     job = "",
                                     about = "",
@@ -231,27 +229,27 @@ public class CardFragment  extends Fragment {
                                     profileImageUrl = "default";
 
                             mAuth = FirebaseAuth.getInstance();
-                            if(mAuth.getCurrentUser()==null)
-                            currentUId = mAuth.getCurrentUser().getUid();
+                            if (mAuth.getCurrentUser() == null)
+                                currentUId = mAuth.getCurrentUser().getUid();
 
-                            if(dataSnapshot.child("name").getValue()!=null)
+                            if (dataSnapshot.child("name").getValue() != null)
                                 name = dataSnapshot.child("name").getValue().toString();
-                            if(dataSnapshot.child("sex").getValue()!=null)
+                            if (dataSnapshot.child("sex").getValue() != null)
                                 userSex = dataSnapshot.child("sex").getValue().toString();
-                            if(dataSnapshot.child("age").getValue()!=null)
+                            if (dataSnapshot.child("age").getValue() != null)
                                 age = dataSnapshot.child("age").getValue().toString();
-                            if(dataSnapshot.child("job").getValue()!=null)
+                            if (dataSnapshot.child("job").getValue() != null)
                                 job = dataSnapshot.child("job").getValue().toString();
-                            if(dataSnapshot.child("about").getValue()!=null)
+                            if (dataSnapshot.child("about").getValue() != null)
                                 about = dataSnapshot.child("about").getValue().toString();
-                            if (dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue() !=null)
+                            if (dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue() != null)
                                 distance = dataSnapshot.child("LatLng").child(currentUId).child("distance").getValue().toString();
-                            if (dataSnapshot.child("profileImageUrl").getValue()!=null)
+                            if (dataSnapshot.child("profileImageUrl").getValue() != null)
                                 profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
                             cardObject item = new cardObject(dataSnapshot.getKey(), name, age, about, job, distance, profileImageUrl);
 
-                            for(int i = 0; i < rowItems.size();i++)
-                                if(rowItems.get(i) == item)
+                            for (int i = 0; i < rowItems.size(); i++)
+                                if (rowItems.get(i) == item)
                                     return;
 
                             rowItems.add(item);
@@ -260,9 +258,11 @@ public class CardFragment  extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             }
+
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
             }
@@ -270,12 +270,12 @@ public class CardFragment  extends Fragment {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
-
 
 
 }

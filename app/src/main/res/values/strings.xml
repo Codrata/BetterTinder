@@ -27,4 +27,5 @@
     <string name="user_s_name">User\'s Name</string>
     <string name="cancel">cancel</string>
     <string name="edit_text_message_hint">message...</string>
+    <string name="moments">Moments</string>
 </resources>

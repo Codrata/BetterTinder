@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:weightSum="4">
+
+
+        <ImageView
+            android:id="@+id/MatchImage"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_user_default" />
+
+        <TextView
+            android:id="@+id/MatchName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:text="@string/match_s_name"
+            app:fontFamily="@font/font_montserrat"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:src="@drawable/ic_send_small"
+            android:tint="@color/colorPrimaryDark" />
+
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/darker_gray" />
+
+
+</LinearLayout>
