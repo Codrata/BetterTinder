@@ -81,9 +81,13 @@ public class UserFragment extends Fragment {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     String  name = "",
                             age = "",
+                            job = "",
                             profileImageUrl = "";
                     if(dataSnapshot.child("name").getValue()!=null)
                         name = dataSnapshot.child("name").getValue().toString();
+
+                    if(dataSnapshot.child("job").getValue()!=null)
+                        job = dataSnapshot.child("job").getValue().toString();
 
                     if(dataSnapshot.child("age").getValue()!=null)
                         age = dataSnapshot.child("age").getValue().toString();
@@ -92,6 +96,7 @@ public class UserFragment extends Fragment {
                         profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
                     mName.setText(name + ", " + age);
+                    mJob.setText(job);
                     Glide.with(getContext()).load(profileImageUrl).apply(RequestOptions.circleCropTransform()).into(mProfileImage);
                 }
             }
