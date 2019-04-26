@@ -23,9 +23,9 @@ import com.codrata.sturrd.SettingsActivity;
 
 public class UserFragment extends Fragment {
 
-    private TextView mName, mJob;
+    private TextView mName, mJob, mSettings, mEditProfile;
 
-    private ImageView mProfileImage, mSettings, mEditProfile;
+    private ImageView mProfileImage;
 
 
     public UserFragment() {

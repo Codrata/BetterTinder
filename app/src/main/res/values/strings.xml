@@ -28,4 +28,6 @@
     <string name="cancel">cancel</string>
     <string name="edit_text_message_hint">message...</string>
     <string name="moments">Moments</string>
+    <string name="settings">Settings</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

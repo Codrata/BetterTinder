@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="top"
-    android:orientation="vertical"
-    android:background="@color/colorDeadBackground">
+    android:background="@color/colorDeadBackground"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:paddingTop="40sp"
-        android:background="@drawable/user_fragment_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="40sp"
         android:paddingBottom="40sp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,71 +22,132 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/profileImage"
                 android:layout_width="150sp"
                 android:layout_height="150sp"
-                android:background="@mipmap/ic_user_default"
-                android:id="@+id/profileImage"/>
+                android:background="@mipmap/ic_user_default" />
+
             <TextView
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:textColor="@color/colorBlack"
                 android:textSize="20sp"
-                android:textColor="@color/colorBlack"
-                android:id="@+id/name"/>
+                android:textStyle="bold" />
+
             <TextView
+                android:id="@+id/job"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="normal"
-                android:textSize="16sp"
                 android:textColor="@color/colorBlack"
-                android:id="@+id/job"/>
+                android:textSize="16sp"
+                android:textStyle="normal" />
         </LinearLayout>
 
         <LinearLayout
-            android:paddingBottom="30sp"
-            android:layout_marginTop="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_marginTop="20sp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
-            <ImageView
-                android:layout_width="75sp"
-                android:layout_height="75sp"
-                android:background="@drawable/ic_settings"
-                android:id="@+id/settings"/>
-            <View
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:background="@color/colorBlack"
-                android:layout_marginLeft="20sp"
-                android:layout_marginRight="20sp"/>
-            <ImageView
-                android:layout_width="75sp"
-                android:layout_height="75sp"
-                android:id="@+id/editProfile"
-                android:background="@drawable/ic_edit"/>
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/background_tinder"
+                    android:weightSum="3"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:tint="@color/colorWhite"
+                        android:src="@drawable/ic_settings_white"/>
+
+                    <TextView
+                        android:id="@+id/settings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="@string/settings"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="23sp" />
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardViewEdit"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/background_tinder"
+                    android:weightSum="3"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:tint="@color/colorWhite"
+                        android:src="@drawable/ic_edit_white_24dp"/>
+
+                    <TextView
+                        android:id="@+id/editProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:padding="10dp"
+                        android:text="@string/edit_profile"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="23sp" />
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:foreground="@color/colorDeadBackground"
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="70dp"
             android:layout_height="78dp"
             android:src="@drawable/logo" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20sp"
-                android:text="@string/s_t_u_r_r_d"
-                android:textColor="@color/colorPrimary"
-                android:textSize="30sp"
-                app:fontFamily="@font/font_montserrat"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20sp"
+            android:text="@string/s_t_u_r_r_d"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            app:fontFamily="@font/font_montserrat" />
 
 
     </LinearLayout>
