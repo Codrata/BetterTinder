@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".NotifyFrags.MomentsFragment">
 
@@ -10,23 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/layoutNewMatches"
+        android:padding="5dp"
         android:orientation="vertical">
-        <TextView
-            android:paddingTop="30sp"
-            android:paddingLeft="20sp"
-            android:paddingBottom="5sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/moments"
-            android:padding="5dp"
-            app:fontFamily="@font/font_montserrat"
-            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/momentsRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
             android:scrollbars="vertical"/>
     </LinearLayout>
 

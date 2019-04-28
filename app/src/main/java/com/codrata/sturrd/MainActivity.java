@@ -17,8 +17,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.codrata.sturrd.NotifyFrags.MessagesFragment;
+import com.codrata.sturrd.NotifyFrags.MomentsFragment;
+import com.codrata.sturrd.NotifyFrags.NewMatchesFrag;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,17 +41,19 @@ import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MainActivity extends AppCompatActivity {
-    private TabLayout tabLayout;
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+    private BottomNavigationView bottomNavigationView;
     private String currentUId;
+    ViewPager viewPager;
     private DatabaseReference usersDb, instanceDb;
     private FusedLocationProviderClient client;
-    private ViewPager viewPager;
-    private int[] tabIcons = {
-            R.drawable.ic_tab_user,
-            R.drawable.ic_fire_heart,
-            R.drawable.ic_tab_chat
-    };
+    CardFragment cardFragment;
+    MessagesFragment messagesFragment;
+    NewMatchesFrag newMatchesFrag;
+    MomentsFragment exploreFragment;
+    UserFragment userFragment;
+    MenuItem prevMenuItem;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,26 +61,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //save the notificationID to the database
 
+        viewPager = findViewById(R.id.viewpager);
+
 
         client = LocationServices.getFusedLocationProviderClient(this);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView = findViewById(R.id.navigation);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                switch (item.getItemId()){
-                    case R.id.navigation_home:
-                        return true;
-
-                    case R.id.navigation_notifications:
-                        Intent NotifyAct = new Intent(getApplicationContext(), NotifyActivity.class);
-                        startActivity(NotifyAct);
-                        break;
-                }
-                return false;
-            }
-        });
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -87,90 +79,42 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("notificationKey").setValue(userId);
             }
         });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        viewPager = findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null) {
+                    prevMenuItem.setChecked(false);
+                }
+                else
+                {
+                    bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                }
+                Log.d("page", "onPageSelected: "+position);
+                bottomNavigationView.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = bottomNavigationView.getMenu().getItem(position);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.sturrd_home);
         locationUpdate();
         requestPermissions();
+        setupViewPager(viewPager);
 
-        tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.addOnTabSelectedListener(
-                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        super.onTabSelected(tab);
-                        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
-                        tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-                    }
-
-                    @Override
-                    public void onTabUnselected(TabLayout.Tab tab) {
-                        super.onTabUnselected(tab);
-                        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.colorGray);
-                        tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-                    }
-
-                    @Override
-                    public void onTabReselected(TabLayout.Tab tab) {
-                        super.onTabReselected(tab);
-                    }
-                }
-        );
-        setupTabIcons();
-
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab = tabLayout.getTabAt(i);
-            if (tab != null) tab.setCustomView(R.layout.view_home_tab);
-        }
-
-        viewPager.setCurrentItem(1, false);
     }
 
-    private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
-    }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new UserFragment(), "ONE");
-        adapter.addFragment(new CardFragment(), "TWO");
-        adapter.addFragment(new ExploreFragment(), "THREE");
-        viewPager.setAdapter(adapter);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            //return mFragmentTitleList.get(position);
-            return null;
-        }
-    }
 
     public void locationUpdate() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -212,5 +156,78 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
 
+    }
+
+    private void setupViewPager(ViewPager viewPager)
+    {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        cardFragment = new CardFragment();
+        newMatchesFrag = new NewMatchesFrag();
+        exploreFragment = new MomentsFragment();
+        userFragment = new UserFragment();
+        messagesFragment = new MessagesFragment();
+        adapter.addFragment(userFragment, "Profile");
+        adapter.addFragment(exploreFragment, "Explore");
+        adapter.addFragment(cardFragment, "Sturrd");
+        adapter.addFragment(newMatchesFrag, "Matches");
+        adapter.addFragment(messagesFragment,"Messages");
+        viewPager.setAdapter(adapter);
+    }
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            //return mFragmentTitleList.get(position);
+            return null;
+        }
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.sturrd_home:
+                viewPager.setCurrentItem(2);
+                break;
+
+            case R.id.sturrd_matches:
+                viewPager.setCurrentItem(3);
+                break;
+
+            case R.id.sturrd_profile:
+                viewPager.setCurrentItem(0);
+                break;
+
+            case R.id.sturrd_messages:
+                viewPager.setCurrentItem(4);
+                break;
+            case R.id.sturrd_moments:
+                viewPager.setCurrentItem(1);
+                break;
+        }
+
+        return false;
     }
 }
