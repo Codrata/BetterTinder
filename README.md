@@ -1,3 +1,6 @@
+This version is public and the codes can be used by anyone 
+by Clinton Oyelami
+
 
 ▷ Tools Used In this Project:
 - Android Studio;
@@ -12,3 +15,5 @@
 3 - Hookup or Date;<br/>
 4 - Distance between two potential matches;<br/>
 5 - View Likes and Match Up Instantly
+6 - Text Messaging
+7 - One Signal Push Notification
